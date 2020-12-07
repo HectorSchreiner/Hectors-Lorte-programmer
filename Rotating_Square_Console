@@ -1,0 +1,85 @@
+using System;
+using System.Threading;
+
+namespace RotatingSquare
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+
+            double spaceWidth = 100; // bredde af console area (x)
+            double spaceHeight = 30; // højde af console area (y) skal være lige tal
+            double halfSpaceWidth = spaceWidth / 2; // giver lidt sig selv!
+            double halfSpaceHeight = spaceHeight / 2;
+            
+            double SquareLength = 9;
+            double SquareHeight = 5;
+            double i = 0;
+            double inputX = -1;
+            double inputY = 0;
+
+            while (true)
+            {
+                inputX = (Math.Cos(i)/spaceWidth + Math.Sin(i));
+                inputY = -(Math.Sin(i)/spaceHeight + Math.Cos(i));
+
+                // konverter pixel space til ndc X koordinater mellem -1 og 1
+                double LineNumberX = inputX * halfSpaceWidth + halfSpaceWidth;
+                double LineNumberY = -(inputY * halfSpaceHeight - halfSpaceHeight);
+                double TotalLinjeSum = LineNumberY * spaceWidth + LineNumberX;
+
+                //Tegner firkant, med LineNumber fra (inputX, inputY) NDC
+                SquareTL(inputX, inputY, LineNumberX, LineNumberY);
+                SquareTR(LineNumberX, SquareLength);
+                SquareBL(LineNumberX, SquareLength, SquareHeight);
+
+                i += .1;
+                Thread.Sleep(20); // in milliseconds
+                Console.Clear();
+            }
+        }
+
+        static void SquareTL(double inputX, double inputY, double LineNumberX, double LineNumberY)
+        {
+            for (int i = 0; i <= Convert.ToInt32(LineNumberY); i++)
+            {
+                Console.WriteLine("");
+            }
+            for (int i = 0; i <= Convert.ToInt32(LineNumberX); i++)
+            {
+                Console.Write(" ");
+            }
+            
+        }
+
+
+        static void SquareTR(double LineNumberX, double SquareLenght)
+        {
+            for (int i = 1; i <= SquareLenght; i++)
+            {
+                Console.Write("#");
+            }
+        }
+
+
+        static void SquareBL(double LineNumberX, double SquareLenght, double SquareHeight)
+        {
+            // i = lines
+            // y = LineNumberX
+            for (int i = 1; i < SquareHeight; i++)
+            {
+                Console.WriteLine("");
+                for (int y = 0; y <= LineNumberX; y++)
+                {
+                    Console.Write(" "); 
+                }
+              // refferer til tegn x antal linjer
+                SquareTR(LineNumberX, SquareLenght);
+            }
+
+        }
+
+
+    }
+}
