@@ -1,0 +1,87 @@
+using System;
+using System.Collections.Generic;
+namespace Vaccine_Indflydelse
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            while (true)
+            {
+
+
+                List<double> KontaktSumListe = new List<double>();
+
+                double It = 0.035; // vækstRate
+                double Tt = 4.7; // gennemsnitlig generationstid i dage
+                double Beta = 0.7; // tager hensyn til antal tests virkning på kontaktal
+
+                int antalDage = 0;
+
+                double BefolkningGamle = 0.12; // pct
+                double BefolkningSundhed = 0.02; // pct
+                double BefolkningUnge = 0.85;
+
+                double kontaktTalGamle = 0.4;
+                double kontaktTalSunhed = 1.4;
+
+                //udregner kontakttal for ældre og sundhedspersonale
+                double KontaktTalUdsatte = (BefolkningGamle * kontaktTalGamle + BefolkningSundhed * kontaktTalSunhed) / (BefolkningGamle + BefolkningSundhed);
+
+                //udregner kontakttal for alderen mellem 0-70år 
+                double KontakTalUnge = 1.1 / BefolkningUnge - (KontaktTalUdsatte * (BefolkningGamle + BefolkningSundhed));
+
+                //udregner kontankttal i alt (Udsatte + "Unge")
+                double KontaktTalSum = 1 + It * Math.Pow(Tt, Beta); // kontaktallet på nuværende tidpunkt
+
+                double pctMinusUnge;
+
+                //for input pct vaccinerede
+                Console.WriteLine("**************************************************************************");
+                Console.Write("Pct. Vaccinerede ");
+                
+                double pctVaccineret = Convert.ToDouble(Console.ReadLine());
+                Console.WriteLine("Kontakt tal : ");
+
+                double PctMinusUdsatte;
+
+                if (pctVaccineret > 14)
+                {
+                    PctMinusUdsatte = 0;
+                    pctMinusUnge = KontakTalUnge - ((KontakTalUnge * BefolkningUnge) * ((pctVaccineret / 100) * 100 / 85));
+                    KontaktTalSum = pctMinusUnge;
+
+                }
+                else
+                {
+                    PctMinusUdsatte = KontaktTalUdsatte - KontaktTalUdsatte * ((pctVaccineret * 7.14) / 100);
+                    pctMinusUnge = KontakTalUnge;
+                    KontaktTalSum = KontakTalUnge * BefolkningUnge + PctMinusUdsatte * (BefolkningSundhed + BefolkningGamle);
+                }
+
+                KontaktSumListe.Add(KontaktTalSum);
+
+                for (int i = 0; KontaktSumListe[i] > 0; i++)
+                {
+                    if (KontaktSumListe[i] > 2 || KontaktSumListe[i] < 0.1)
+                    {
+                        break;
+                    }
+                    else 
+                    {
+                        KontaktSumListe.Add((KontaktSumListe[i] * KontaktSumListe[i]));
+                        Console.WriteLine(KontaktSumListe[i]);
+                    }
+                    antalDage++;
+                    
+                }
+                Console.WriteLine("---------------------------------");
+                Console.WriteLine("Antal dage "+ antalDage * Tt);
+                Console.WriteLine("---------------------------------");
+                Console.WriteLine();
+            }
+        }
+        
+
+    }
+}
